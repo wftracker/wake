@@ -16,7 +16,7 @@ class Wake:
         'r2': 0x00000000
     }
 
-    def __init__(self, game_version: str, game_crypt_iv: str, game_crypt_key: str):
+    def __init__(self, game_version: str, game_crypt_iv: str, game_crypt_key: str, **kwargs):
         self.game_version: list = self._ready_cls_parm(game_version, '.')
         self.game_crypt_iv: list = self._ready_cls_parm(game_crypt_iv)
         self.game_crypt_key: list = self._ready_cls_parm(game_crypt_key)
@@ -199,27 +199,4 @@ class Wake:
 
         self.__mcrypt_set_key(_wake_key, self.game_crypt_key, len(self.game_crypt_key), self.game_crypt_iv, len(self.game_crypt_iv))
         return self.__mcrypt_encrypt(_wake_key, msg, msg_len)
-
-    def _mcrypt_self_test(self):
-        """TODO"""
-
-        _wake_key = copy.deepcopy(self.WAKE_KEY)
-        mcrypt_key_size = self._mcrypt_get_key_size()
-
-        keyword: list = [None] * mcrypt_key_size
-        blocksize: int = 43
-        plaintext: list = [None] * 43
-        ciphertext: list = [None] * 43
-        cipher_tmp: list = [None] * 200
-
-        for j in range(0, mcrypt_key_size):
-            keyword[j] = (j * 5 + 10) & 0xff
-
-        for j in range(0, blocksize):
-            plaintext[j] = (j + 5) % 0xff
-
-        ciphertext = plaintext
-
-        self.__mcrypt_set_key(_wake_key, keyword, mcrypt_key_size, None, 0)
-        ciphertext = list(self.__mcrypt_encrypt(_wake_key, bytes(ciphertext), blocksize))
 
